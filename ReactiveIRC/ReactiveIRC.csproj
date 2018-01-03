@@ -2,6 +2,17 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>Joshua Cotton</Authors>
+    <Company />
+    <Description>An IRCv3 client built upon the Reactive Extensions</Description>
+    <Copyright>2018</Copyright>
+    <PackageLicenseUrl>https://github.com/jcotton42/ReactiveIRC/blob/master/License.txt</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/jcotton42/ReactiveIRC</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/jcotton42/ReactiveIRC</RepositoryUrl>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard2.0\ReactiveIRC.xml</DocumentationFile>
   </PropertyGroup>
 
 </Project>
