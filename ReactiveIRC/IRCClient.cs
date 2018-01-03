@@ -1,6 +1,6 @@
 ﻿using System;
 
 namespace ReactiveIRC {
-    public class Class1 {
+    public class IRCClient {
     }
 }
