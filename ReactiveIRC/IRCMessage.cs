@@ -22,6 +22,51 @@ namespace ReactiveIRC {
             Parameters = parameters;
         }
 
+        public override string ToString() {
+            var sb = new StringBuilder();
+
+            if(!Tags.IsEmpty) {
+                sb
+                    .Append("@")
+                    .Append(string.Join(";", Tags.Select(kvp => $"{kvp.Key}{HandleValue(kvp.Value)}")))
+                    .Append(" ");
+            }
+
+            if(!Source.Equals(string.Empty)) {
+                sb.Append(":").Append(Source).Append(" ");
+            }
+
+            sb.Append(Verb);
+
+            if(!Parameters.IsEmpty) {
+                if(Parameters.Length == 1) {
+                    sb.Append(" :").Append(Parameters[0]);
+                } else {
+                    sb
+                        .Append(" ")
+                        .Append(string.Join(" ", Parameters.Take(Parameters.Length - 1)))
+                        .Append(" :")
+                        .Append(Parameters[Parameters.Length - 1]);
+                }
+            }
+
+            return sb.ToString();
+
+            string HandleValue(string value) {
+                if(value.Equals("")) {
+                    return "";
+                }
+
+                return new StringBuilder("=" + value)
+                    .Replace(";", "\\:")
+                    .Replace(" ", "\\s")
+                    .Replace("\\", "\\\\")
+                    .Replace("\r", "\\r")
+                    .Replace("\n", "\\n")
+                    .ToString();
+            }
+        }
+
         public static IRCMessage Parse(string message) {
             if(message is null) {
                 throw new ArgumentNullException(nameof(message));
