@@ -22,51 +22,6 @@ namespace ReactiveIRC {
             Parameters = parameters;
         }
 
-        public override string ToString() {
-            var sb = new StringBuilder();
-
-            if(!Tags.IsEmpty) {
-                sb
-                    .Append("@")
-                    .Append(string.Join(";", Tags.Select(kvp => $"{kvp.Key}{HandleValue(kvp.Value)}")))
-                    .Append(" ");
-            }
-
-            if(!Source.Equals(string.Empty)) {
-                sb.Append(":").Append(Source).Append(" ");
-            }
-
-            sb.Append(Verb);
-
-            if(!Parameters.IsEmpty) {
-                if(Parameters.Length == 1) {
-                    sb.Append(" :").Append(Parameters[0]);
-                } else {
-                    sb
-                        .Append(" ")
-                        .Append(string.Join(" ", Parameters.Take(Parameters.Length - 1)))
-                        .Append(" :")
-                        .Append(Parameters[Parameters.Length - 1]);
-                }
-            }
-
-            return sb.ToString();
-
-            string HandleValue(string value) {
-                if(value.Equals("")) {
-                    return "";
-                }
-
-                return new StringBuilder("=" + value)
-                    .Replace(";", "\\:")
-                    .Replace(" ", "\\s")
-                    .Replace("\\", "\\\\")
-                    .Replace("\r", "\\r")
-                    .Replace("\n", "\\n")
-                    .ToString();
-            }
-        }
-
         public static IRCMessage Parse(string message) {
             if(message is null) {
                 throw new ArgumentNullException(nameof(message));
@@ -153,6 +108,63 @@ namespace ReactiveIRC {
                     parsed.Add(parts[1]);
                 }
                 return parsed.ToImmutable();
+            }
+        }
+
+        public override bool Equals(object obj) => obj is IRCMessage msg && Equals(msg);
+
+        public bool Equals(IRCMessage msg) => Source.Equals(msg.Source)
+                && Verb.Equals(msg.Verb)
+                && Tags.Count == msg.Tags.Count
+                && Parameters.Length == msg.Parameters.Length
+                && !Tags.Except(msg.Tags).Any()
+                && Parameters.SequenceEqual(msg.Parameters);
+
+        public static bool operator ==(IRCMessage lhs, IRCMessage rhs) => lhs.Equals(rhs);
+        public static bool operator !=(IRCMessage lhs, IRCMessage rhs) => !lhs.Equals(rhs);
+
+        public override string ToString() {
+            var sb = new StringBuilder();
+
+            if(!Tags.IsEmpty) {
+                sb
+                    .Append("@")
+                    .Append(string.Join(";", Tags.Select(kvp => $"{kvp.Key}{HandleValue(kvp.Value)}")))
+                    .Append(" ");
+            }
+
+            if(!Source.Equals(string.Empty)) {
+                sb.Append(":").Append(Source).Append(" ");
+            }
+
+            sb.Append(Verb);
+
+            if(!Parameters.IsEmpty) {
+                if(Parameters.Length == 1) {
+                    sb.Append(" :").Append(Parameters[0]);
+                } else {
+                    sb
+                        .Append(" ")
+                        .Append(string.Join(" ", Parameters.Take(Parameters.Length - 1)))
+                        .Append(" :")
+                        .Append(Parameters[Parameters.Length - 1]);
+                }
+            }
+
+            return sb.ToString();
+
+            string HandleValue(string value) {
+                if(value.Equals("")) {
+                    return "";
+                }
+
+                return new StringBuilder("=" + value)
+                    .Replace(";", "\\:")
+                    .Replace(" ", "\\s")
+                    .Replace("\\", "\\\\")
+                    .Replace("\r", "\\r")
+                    .Replace("\n", "\\n")
+                    .ToString();
             }
         }
     }
