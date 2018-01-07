@@ -101,9 +101,13 @@ namespace ReactiveIRC {
                     return ImmutableArray<string>.Empty;
                 }
 
+                if(parameters.StartsWith(":")) {
+                    return ImmutableArray.Create(parameters.Substring(1));
+                }
+
                 var parsed = ImmutableArray.CreateBuilder<string>();
                 var parts = parameters.Split(new[] { " :" }, 2, StringSplitOptions.None);
-                parsed.AddRange(Regex.Split(parts[0], " +").Select(s => s.Trim(' ')));
+                parsed.AddRange(Regex.Split(parts[0].Trim(' '), " +").Select(s => s.Trim(' ')));
                 if(parts.Length > 1) {
                     parsed.Add(parts[1]);
                 }
