@@ -53,6 +53,10 @@ namespace ReactiveIRC {
                 }
 
                 string UnescapeValue(string value) {
+                    if(value.Equals("")) {
+                        return "";
+                    }
+
                     var sb = new StringBuilder();
 
                     for(var i = 0; i < value.Length; i++) {
