@@ -1,0 +1,3 @@
+[submodule "Tests/irc-parser-tests"]
+	path = Tests/irc-parser-tests
+	url = https://github.com/DanielOaks/irc-parser-tests.git
