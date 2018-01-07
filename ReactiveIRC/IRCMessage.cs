@@ -7,18 +7,18 @@ using System.Text.RegularExpressions;
 namespace ReactiveIRC {
     public struct IRCMessage {
         private static readonly Regex MessageRegex =
-            new Regex(@"(@(?<tags>[^ ]*) +)?(:(?<prefix>[^ ]*) +)?(?<command>[^ ]+)( +(?<params>.*))?");
+            new Regex(@"(@(?<tags>[^ ]*) +)?(:(?<prefix>[^ ]*) +)?(?<verb>[^ ]+)( +(?<params>.*))?");
 
         public ImmutableDictionary<string, string> Tags { get; }
         public string Source { get; }
-        public string Command { get; }
+        public string Verb { get; }
         public ImmutableArray<string> Parameters { get; }
 
-        public IRCMessage(ImmutableDictionary<string, string> tags, string source, string command,
+        public IRCMessage(ImmutableDictionary<string, string> tags, string source, string verb,
             ImmutableArray<string> parameters) {
             Tags = tags ?? throw new ArgumentNullException(nameof(tags));
             Source = source ?? throw new ArgumentNullException(nameof(source));
-            Command = command?.ToUpperInvariant() ?? throw new ArgumentNullException(nameof(command));
+            Verb = verb?.ToUpperInvariant() ?? throw new ArgumentNullException(nameof(verb));
             Parameters = parameters;
         }
 
@@ -35,7 +35,7 @@ namespace ReactiveIRC {
             return new IRCMessage(
                 ParseTags(matches.Groups["tags"].Value),
                 matches.Groups["prefix"].Value,
-                matches.Groups["command"].Value,
+                matches.Groups["verb"].Value,
                 ParseParams(matches.Groups["params"].Value)
                 );
 
