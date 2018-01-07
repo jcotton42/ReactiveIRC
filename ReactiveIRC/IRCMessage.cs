@@ -163,9 +163,9 @@ namespace ReactiveIRC {
                 }
 
                 return new StringBuilder("=" + value)
+                    .Replace("\\", "\\\\")
                     .Replace(";", "\\:")
                     .Replace(" ", "\\s")
-                    .Replace("\\", "\\\\")
                     .Replace("\r", "\\r")
                     .Replace("\n", "\\n")
                     .ToString();
