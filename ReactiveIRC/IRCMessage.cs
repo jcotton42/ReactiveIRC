@@ -84,7 +84,7 @@ namespace ReactiveIRC {
                                     sb.Append('\n');
                                     break;
                                 default:
-                                    sb.Append("\\" + value[i]);
+                                    sb.Append(value[i]);
                                     break;
                             }
                         } else {
