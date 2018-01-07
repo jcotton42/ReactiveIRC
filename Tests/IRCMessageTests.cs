@@ -41,6 +41,15 @@ namespace Tests {
         [MemberData(nameof(GetJoinData))]
         public void TestMessageToString(MessageTest data) {
             var atoms = data.Atoms;
+
+            if(atoms.Tags != null) {
+                foreach(var key in atoms.Tags.Keys.ToArray()) {
+                    if(atoms.Tags[key] == null) {
+                        atoms.Tags[key] = "";
+                    }
+                }
+            }
+
             var message = new IRCMessage(
                 atoms.Tags?.ToImmutableDictionary() ?? ImmutableDictionary<string, string>.Empty,
                 atoms.Source ?? "",
