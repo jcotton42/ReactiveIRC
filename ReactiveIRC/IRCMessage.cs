@@ -20,6 +20,13 @@ namespace ReactiveIRC {
             Source = source ?? throw new ArgumentNullException(nameof(source));
             Verb = verb?.ToUpperInvariant() ?? throw new ArgumentNullException(nameof(verb));
             Parameters = parameters;
+            
+            if(Tags.Values.Contains(null)) {
+                throw new ArgumentNullException(nameof(tags) + " must not contain null values, use empty string instead.");
+            }
+            if(Parameters.Contains(null)) {
+                throw new ArgumentNullException(nameof(parameters) + " must not contain null values, use empty string instead.");
+            }
         }
 
         public static IRCMessage Parse(string message) {
