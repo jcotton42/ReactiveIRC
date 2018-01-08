@@ -5,15 +5,64 @@ using System.Text;
 using System.Text.RegularExpressions;
 
 namespace ReactiveIRC {
+    /// <summary>
+    /// Represents an IRC message. This type is immutable once constructed.
+    /// </summary>
     public struct IRCMessage {
         private static readonly Regex MessageRegex =
             new Regex(@"(@(?<tags>[^ ]*) +)?(:(?<prefix>[^ ]*) +)?(?<verb>[^ ]+)( +(?<params>.*))?");
 
+        /// <summary>
+        /// The tags associated with this message.
+        /// Equal to <see cref="ImmutableDictionary{TKey, TValue}.Empty"/> if the message had no tags.
+        /// </summary>
         public ImmutableDictionary<string, string> Tags { get; }
+
+        /// <summary>
+        /// The source the message came from.
+        /// Equal to <see cref="string.Empty"/> if the message had no source.
+        /// </summary>
         public string Source { get; }
+
+        /// <summary>
+        /// The verb for this message.
+        /// Always a non-empty value and uppercase.
+        /// </summary>
         public string Verb { get; }
+
+        /// <summary>
+        /// The parameters for this message.
+        /// Equal to <see cref="ImmutableArray{T}.Empty"/> if the message had no parameters.
+        /// </summary>
         public ImmutableArray<string> Parameters { get; }
 
+        /// <summary>
+        /// Constructs a new IRCMessage.
+        /// </summary>
+        /// <param name="tags">
+        /// The tags associated with the message. May not be null or contain null values.
+        /// Use <see cref="ImmutableDictionary{TKey, TValue}.Empty"/> or <see cref="string.Empty"/> instead respectively.
+        /// </param>
+        /// <param name="source">
+        /// The source for this message, usually a nick or host.
+        /// May not be null, use <see cref="string.Empty"/> instead.
+        /// </param>
+        /// <param name="verb">
+        /// The verb used in the message, such as "PRIVMSG".
+        /// May not be null or entirely whitespace.
+        /// </param>
+        /// <param name="parameters">
+        /// The parameters for the message. May not be null or contain null values.
+        /// Use <see cref="ImmutableArray{T}.Empty"/> or <see cref="string.Empty"/> instead respectively.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// <para>Any of the parameters are null.</para>
+        /// <para>-or-</para>
+        /// <para><paramref name="tags"/> or <paramref name="parameters"/> contain null values.</para>
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="verb"/> is null or entirely whitespace.
+        /// </exception>
         public IRCMessage(ImmutableDictionary<string, string> tags, string source, string verb,
             ImmutableArray<string> parameters) {
             Tags = tags ?? throw new ArgumentNullException(nameof(tags));
@@ -33,6 +82,13 @@ namespace ReactiveIRC {
             }
         }
 
+        /// <summary>
+        /// Parses an IRC messages from a given string.
+        /// </summary>
+        /// <param name="message">The message to be parsed.</param>
+        /// <returns>An instance of <see cref="IRCMessage"/> parsed from <paramref name="message"/>.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="message"/> is null.</exception>
+        /// <exception cref="FormatException"><paramref name="message"/> is not a valid IRC message.</exception>
         public static IRCMessage Parse(string message) {
             if(message is null) {
                 throw new ArgumentNullException(nameof(message));
@@ -126,8 +182,18 @@ namespace ReactiveIRC {
             }
         }
 
+        /// <summary>
+        /// Compares this <see cref="IRCMessage"/> to another object for equality.
+        /// </summary>
+        /// <param name="obj">The object to compare to.</param>
+        /// <returns><c>true</c> if <paramref name="obj"/> is an <see cref="IRCMessage"/> and equal, <c>false</c> otherwise,</returns>
         public override bool Equals(object obj) => obj is IRCMessage msg && Equals(msg);
 
+        /// <summary>
+        /// Compares this IRCMessage to another one for equality.
+        /// </summary>
+        /// <param name="msg">The message to compare to.</param>
+        /// <returns><c>true</c> if the messages are equal in tags, source, verb, and parameters. <c>false</c> otherwise.</returns>
         public bool Equals(IRCMessage msg) => Source.Equals(msg.Source)
                 && Verb.Equals(msg.Verb)
                 && Tags.Count == msg.Tags.Count
@@ -135,6 +201,10 @@ namespace ReactiveIRC {
                 && !Tags.Except(msg.Tags).Any()
                 && Parameters.SequenceEqual(msg.Parameters);
 
+        /// <summary>
+        /// Returns the string representation of the message in a format suitable for sending to a server.
+        /// </summary>
+        /// <returns>The string version of this message.</returns>
         public override string ToString() {
             var sb = new StringBuilder();
 
