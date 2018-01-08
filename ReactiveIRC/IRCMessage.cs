@@ -201,6 +201,9 @@ namespace ReactiveIRC {
                 && !Tags.Except(msg.Tags).Any()
                 && Parameters.SequenceEqual(msg.Parameters);
 
+        public static bool operator ==(IRCMessage lhs, IRCMessage rhs) => lhs.Equals(rhs);
+        public static bool operator !=(IRCMessage lhs, IRCMessage rhs) => !lhs.Equals(rhs);
+
         /// <summary>
         /// Returns the string representation of the message in a format suitable for sending to a server.
         /// </summary>
