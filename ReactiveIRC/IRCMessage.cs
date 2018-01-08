@@ -135,9 +135,6 @@ namespace ReactiveIRC {
                 && !Tags.Except(msg.Tags).Any()
                 && Parameters.SequenceEqual(msg.Parameters);
 
-        public static bool operator ==(IRCMessage lhs, IRCMessage rhs) => lhs.Equals(rhs);
-        public static bool operator !=(IRCMessage lhs, IRCMessage rhs) => !lhs.Equals(rhs);
-
         public override string ToString() {
             var sb = new StringBuilder();
 
