@@ -8,7 +8,7 @@ namespace ReactiveIRC {
     /// <summary>
     /// Represents an IRC message. This type is immutable once constructed.
     /// </summary>
-    public struct IRCMessage {
+    public struct IRCMessage : IEquatable<IRCMessage> {
         private static readonly Regex MessageRegex =
             new Regex(@"(@(?<tags>[^ ]*) +)?(:(?<prefix>[^ ]*) +)?(?<verb>[^ ]+)( +(?<params>.*))?");
 
