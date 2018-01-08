@@ -74,6 +74,9 @@ namespace ReactiveIRC {
             }
             Verb = verb;
 
+            if(Tags.Keys.Any(k => k == "" || Regex.IsMatch(k, "\\s"))) {
+                throw new ArgumentException("Tag keys may not be empty or contain whitespace.");
+            }
             if(Tags.Values.Contains(null)) {
                 throw new ArgumentNullException(nameof(tags) + " must not contain null values, use empty string instead.");
             }
