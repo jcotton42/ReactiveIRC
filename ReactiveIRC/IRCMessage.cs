@@ -86,6 +86,21 @@ namespace ReactiveIRC {
         }
 
         /// <summary>
+        /// Creates a new <see cref="IRCMessageBuilder"/> that can be used to build a new <see cref="IRCMessage"/>.
+        /// </summary>
+        /// <param name="verb">The verb to use in the message.</param>
+        /// <returns>A new <see cref="IRCMessageBuilder"/>.</returns>
+        public static IRCMessageBuilder CreateBuilder(string verb) {
+            if(verb is null) {
+                throw new ArgumentNullException(nameof(verb));
+            }
+            if(verb == "" || Regex.IsMatch(verb, "\\s")) {
+                throw new ArgumentException(nameof(verb) + " may not be empty or contain whitespace.");
+            }
+            return new IRCMessageBuilder(verb);
+        }
+
+        /// <summary>
         /// Parses an IRC messages from a given string.
         /// </summary>
         /// <param name="message">The message to be parsed.</param>
