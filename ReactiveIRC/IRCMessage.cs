@@ -18,9 +18,13 @@ namespace ReactiveIRC {
             ImmutableArray<string> parameters) {
             Tags = tags ?? throw new ArgumentNullException(nameof(tags));
             Source = source ?? throw new ArgumentNullException(nameof(source));
-            Verb = verb?.ToUpperInvariant() ?? throw new ArgumentNullException(nameof(verb));
             Parameters = parameters;
-            
+
+            if(string.IsNullOrWhiteSpace(verb)) {
+                throw new ArgumentException(nameof(verb) + " may not be null or entirely whitespace.");
+            }
+            Verb = verb;
+
             if(Tags.Values.Contains(null)) {
                 throw new ArgumentNullException(nameof(tags) + " must not contain null values, use empty string instead.");
             }
