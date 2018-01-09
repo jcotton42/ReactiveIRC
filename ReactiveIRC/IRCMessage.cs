@@ -40,48 +40,55 @@ namespace ReactiveIRC {
         /// Constructs a new IRCMessage.
         /// </summary>
         /// <param name="tags">
-        /// The tags associated with the message. May not be null or contain null values.
+        /// The tags associated with the message. May not be <c>null</c> or contain <c>null</c> values.
         /// Use <see cref="ImmutableDictionary{TKey, TValue}.Empty"/> or <see cref="string.Empty"/> instead respectively.
         /// </param>
         /// <param name="source">
         /// The source for this message, usually a nick or host.
-        /// May not be null, use <see cref="string.Empty"/> instead.
+        /// May not be <c>null</c>, use <see cref="string.Empty"/> instead.
         /// </param>
         /// <param name="verb">
         /// The verb used in the message, such as "PRIVMSG".
-        /// May not be null or entirely whitespace.
+        /// May not be <c>null</c> or entirely whitespace.
         /// </param>
         /// <param name="parameters">
-        /// The parameters for the message. May not be null or contain null values.
+        /// The parameters for the message. May not be null or contain <c>null</c> values.
         /// Use <see cref="ImmutableArray{T}.Empty"/> or <see cref="string.Empty"/> instead respectively.
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// <para>Any of the parameters are null.</para>
-        /// <para>-or-</para>
-        /// <para><paramref name="tags"/> or <paramref name="parameters"/> contain null values.</para>
+        /// <para>Any of the parameters are <c>null</c>.</para>
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// <paramref name="verb"/> is null or entirely whitespace.
+        /// <para><paramref name="verb"/> is empty or contains whitespace.</para>
+        /// <para>-or-</para>
+        /// <para><paramref name="tags"/> or <paramref name="parameters"/> contain <c>null</c> values.</para>
+        /// <para>-or-</para>
+        /// <para>Any but the element of <paramref name="parameters"/> contains a space.</para>
         /// </exception>
+        /// <remarks><paramref name="source"/> is usually ignored by IRC servers when sent by clients.</remarks>
         public IRCMessage(ImmutableDictionary<string, string> tags, string source, string verb,
             ImmutableArray<string> parameters) {
             Tags = tags ?? throw new ArgumentNullException(nameof(tags));
             Source = source ?? throw new ArgumentNullException(nameof(source));
+            Verb = verb ?? throw new ArgumentNullException(nameof(verb));
             Parameters = parameters;
 
-            if(string.IsNullOrWhiteSpace(verb)) {
-                throw new ArgumentException(nameof(verb) + " may not be null or entirely whitespace.");
+            if(Verb == "" || Regex.IsMatch(verb, "\\s")) {
+                throw new ArgumentException(nameof(verb) + " may not be empty or contain whitespace.");
             }
-            Verb = verb;
-
             if(Tags.Keys.Any(k => k == "" || Regex.IsMatch(k, "\\s"))) {
                 throw new ArgumentException("Tag keys may not be empty or contain whitespace.");
             }
             if(Tags.Values.Contains(null)) {
-                throw new ArgumentNullException(nameof(tags) + " must not contain null values, use empty string instead.");
+                throw new ArgumentException(nameof(tags) + " must not contain null values, use empty string instead.");
             }
-            if(Parameters.Contains(null)) {
-                throw new ArgumentNullException(nameof(parameters) + " must not contain null values, use empty string instead.");
+            for(var i = 0; i < Parameters.Length; i++) {
+                if(Parameters[i] is null) {
+                    throw new ArgumentException(nameof(parameters) + " must not contain null values, use empty string instead.");
+                }
+                if(i != Parameters.Length - 1 && Parameters[i].Contains(" ")) {
+                    throw new ArgumentException("Only the last parameter in an IRC message may contain whitespace.");
+                }
             }
         }
 
