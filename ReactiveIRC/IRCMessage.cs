@@ -86,6 +86,47 @@ namespace ReactiveIRC {
         }
 
         /// <summary>
+        /// Convenience method to create a new IRC message with the specified verb and parameters.
+        /// </summary>
+        /// <param name="verb">The verb to use in the message.</param>
+        /// <param name="parameters">The parameters to use in the message.</param>
+        /// <returns>A new <see cref="IRCMessage"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <para>Any of the parameters are null.</para>
+        /// <para>-or-</para>
+        /// <para><paramref name="parameters"/> contains null values.</para>
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="verb"/> is null or entirely whitespace.
+        /// </exception>
+        public static IRCMessage Create(string verb, params string[] parameters) {
+            return Create(ImmutableDictionary<string, string>.Empty, verb, parameters);
+        }
+
+        /// <summary>
+        /// Convenience method to create a new IRC message with the specified tags, verb, and parameters.
+        /// </summary>
+        /// <param name="tags">The tags to use in the message.</param>
+        /// <param name="verb">The verb to use in the message.</param>
+        /// <param name="parameters">The parameters to use in the message.</param>
+        /// <returns>A new <see cref="IRCMessage"/>.</returns>
+        /// <exception cref="ArgumentNullException">
+        /// <para>Any of the parameters are null.</para>
+        /// <para>-or-</para>
+        /// <para><paramref name="tags"/> or <paramref name="parameters"/> contain null values.</para>
+        /// </exception>
+        /// <exception cref="ArgumentException">
+        /// <paramref name="verb"/> is null or entirely whitespace.
+        /// </exception>
+        public static IRCMessage Create(ImmutableDictionary<string, string> tags, string verb, params string[] parameters) {
+            return new IRCMessage(
+                tags,
+                "",
+                verb,
+                parameters?.ToImmutableArray() ?? throw new ArgumentNullException(nameof(parameters)));
+        }
+
+        /// <summary>
         /// Creates a new <see cref="IRCMessageBuilder"/> that can be used to build a new <see cref="IRCMessage"/>.
         /// </summary>
         /// <param name="verb">The verb to use in the message.</param>
