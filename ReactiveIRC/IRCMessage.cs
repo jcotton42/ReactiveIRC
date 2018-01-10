@@ -70,7 +70,7 @@ namespace ReactiveIRC {
             ImmutableArray<string> parameters) {
             Tags = tags ?? throw new ArgumentNullException(nameof(tags));
             Source = source ?? throw new ArgumentNullException(nameof(source));
-            Verb = verb ?? throw new ArgumentNullException(nameof(verb));
+            Verb = verb?.ToUpperInvariant() ?? throw new ArgumentNullException(nameof(verb));
             Parameters = parameters;
 
             if(Verb == "" || Regex.IsMatch(verb, "\\s")) {
